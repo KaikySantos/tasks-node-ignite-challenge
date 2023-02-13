@@ -49,14 +49,15 @@ export class Database {
     const rowIndex = this.#database[table].findIndex(row => row.id === id)
 
     if (rowIndex > -1) {
-      const { title, description } = this.#database[table][rowIndex]
+      const { title, description, ...rest } = this.#database[table][rowIndex]
       
       const newTitle = data.title ?? title
       const newDescription = data.description ?? description
 
       const newData = {
         title: newTitle,
-        description: newDescription
+        description: newDescription,
+        ...rest
       }
 
       this.#database[table][rowIndex] = { id, ...newData }
