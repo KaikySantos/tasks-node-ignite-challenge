@@ -65,6 +65,24 @@ export class Database {
     }
   }
 
+  updateCompletedAt(table, id, data) {
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+    if (rowIndex > -1) {
+      const { completed_at, ...rest } = this.#database[table][rowIndex]
+
+      const newData = {
+        completed_at: completed_at ? false : true,
+        ...rest
+      }
+
+      console.log(newData)
+
+      this.#database[table][rowIndex] = { id, ...newData }
+      this.#persist()
+    }
+  }
+
   delete(table, id) {
     const rowIndex = this.#database[table].findIndex(row => row.id === id)
 
