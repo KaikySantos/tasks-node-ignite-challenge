@@ -16,7 +16,7 @@ export class Database {
   }
 
   #persist() {
-    fs.writeFile(databasePath, JSON.stringify(this.#database))
+    fs.writeFile(databasePath, JSON.stringify(this.#database, null, 2))
   }
 
   select(table, search) {
@@ -25,6 +25,8 @@ export class Database {
     if (search) {
       data = data.filter(row => {
         return Object.entries(search).some(([key, value]) => {
+          if (!value) return true
+
           return row[key].includes(value)
         })
       })
@@ -49,36 +51,8 @@ export class Database {
     const rowIndex = this.#database[table].findIndex(row => row.id === id)
 
     if (rowIndex > -1) {
-      const { title, description, ...rest } = this.#database[table][rowIndex]
-      
-      const newTitle = data.title ?? title
-      const newDescription = data.description ?? description
-
-      const newData = {
-        title: newTitle,
-        description: newDescription,
-        ...rest
-      }
-
-      this.#database[table][rowIndex] = { id, ...newData }
-      this.#persist()
-    }
-  }
-
-  updateCompletedAt(table, id, data) {
-    const rowIndex = this.#database[table].findIndex(row => row.id === id)
-
-    if (rowIndex > -1) {
-      const { completed_at, ...rest } = this.#database[table][rowIndex]
-
-      const newData = {
-        completed_at: completed_at ? false : true,
-        ...rest
-      }
-
-      console.log(newData)
-
-      this.#database[table][rowIndex] = { id, ...newData }
+      const row = this.#database[table][rowIndex]
+      this.#database[table][rowIndex] = { id, ...row, ...data }
       this.#persist()
     }
   }
