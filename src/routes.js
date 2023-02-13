@@ -11,10 +11,12 @@ export const routes = [
     handler: (req, res) => {
       const { search } = req.query
 
-      const tasks = database.select('tasks', {
+      const searchData = search ? {
         title: search,
         description: search
-      })
+      } : null
+
+      const tasks = database.select('tasks', searchData)
 
       return res.end(JSON.stringify(tasks))
     }
@@ -27,8 +29,8 @@ export const routes = [
 
       const user = {
         id: randomUUID(),
-        name,
-        email,
+        title,
+        description,
         completed_at: null,
         created_at: new Date(),
         updated_at: new Date()
